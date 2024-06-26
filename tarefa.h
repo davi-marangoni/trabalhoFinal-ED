@@ -20,9 +20,11 @@ typedef struct arvore {
 void iniciarArvore(Arvore *a);
 No* inserirElemento(No *no, No *novo);
 void imprimirArvore(No *no);
+No* buscarElemento(No *no, int id);
 
 // Funções de manipulação de tarefas
 void criarTarefa(Arvore *arvore, int id);
+void concluirTarefa(Arvore *arvore);
 void adicionarTarefa(Arvore *a, Tarefa t);
 void visualizarTarefas(Arvore *a);
 

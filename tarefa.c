@@ -31,6 +31,40 @@ void imprimirArvore(No *no){
     }
 }
 
+No* buscarElemento(No *no, int id){
+    if(no == NULL){
+        return NULL;
+    } else {
+        if(no->tarefa.id == id){
+            return no;
+        } else {
+            if(no->tarefa.id > id){
+                return buscarElemento(no->esquerda, id);
+            } else {
+                return buscarElemento(no->direita, id);
+            }
+        }
+    }
+}
+
+void concluirTarefa(Arvore *arvore){
+    int id;
+    printf("Digite o ID da tarefa que deseja concluir: ");
+    scanf("%d", &id);
+    No *tarefa = buscarElemento(arvore->raiz, id);
+    if(tarefa != NULL){
+        if (tarefa->tarefa.situacao == 2) {
+            printf("Tarefa ja concluida!\n");
+            return;
+        }
+        tarefa->tarefa.situacao = 2;
+    } 
+    else {
+        printf("Tarefa nao encontrada!\n");
+
+    }
+}
+
 void criarTarefa(Arvore *arvore, int id){
     Tarefa tarefa;
     printf("Digite a descricao da tarefa: \n");

@@ -28,7 +28,8 @@ int main(){
                 imprimirArvore(arvore->raiz);
                 break;
             case 3:
-
+                concluirTarefa(arvore);
+                break;
             case 4:
 
             case 5:
