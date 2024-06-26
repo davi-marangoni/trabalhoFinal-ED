@@ -31,7 +31,8 @@ int main(){
                 concluirTarefa(arvore);
                 break;
             case 4:
-
+                excluirTarefa(arvore);
+                break;
             case 5:
 
             default:

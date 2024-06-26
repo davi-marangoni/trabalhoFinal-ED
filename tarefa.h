@@ -7,6 +7,7 @@ typedef struct {
 
 
 typedef struct No {
+    struct No* pai;
     Tarefa tarefa;
     struct No* esquerda;
     struct No* direita;
@@ -18,15 +19,14 @@ typedef struct arvore {
 
 // Funções de manipulação de árvore
 void iniciarArvore(Arvore *a);
-No* inserirElemento(No *no, No *novo);
+No* inserirElemento(No *no, No *novo, No *pai);
 void imprimirArvore(No *no);
 No* buscarElemento(No *no, int id);
 
 // Funções de manipulação de tarefas
 void criarTarefa(Arvore *arvore, int id);
 void concluirTarefa(Arvore *arvore);
-void adicionarTarefa(Arvore *a, Tarefa t);
-void visualizarTarefas(Arvore *a);
+void excluirTarefa(Arvore *arvore);
 
 
 

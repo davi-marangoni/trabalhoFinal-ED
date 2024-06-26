@@ -7,14 +7,15 @@ void iniciarArvore(Arvore *a){
     a->raiz = NULL;
 }
 
-No* inserirElemento(No *no, No *novo){
+No* inserirElemento(No *no, No *novo, No *pai){
     if (no == NULL){
+        novo->pai = pai;
         return novo;
     } else {
         if (no->tarefa.id >= novo->tarefa.id)
-            no->esquerda = inserirElemento(no->esquerda, novo);
+            no->esquerda = inserirElemento(no->esquerda, novo, no);
         else
-            no->direita = inserirElemento(no->direita, novo);
+            no->direita = inserirElemento(no->direita, novo, no);
     }
     return no;
 }
@@ -26,6 +27,10 @@ void imprimirArvore(No *no){
         printf("Descricao: %s", no->tarefa.descricao);
         printf("Tempo limite (em horas): %d\n", no->tarefa.tempoLimite);
         printf("Situcao: %s\n", no->tarefa.situacao == 1 ? "Ativa" : "Concluida");
+        printf("DEBUG\n");
+        printf("Pai: %d\n", no->pai == NULL ? -1 : no->pai->tarefa.id);
+        printf("Filho esquerdo: %d\n", no->esquerda == NULL ? -1 : no->esquerda->tarefa.id);
+        printf("Filho direito: %d\n", no->direita == NULL ? -1 : no->direita->tarefa.id);
         printf("--------------------\n");
         imprimirArvore(no->direita);
     }
@@ -44,6 +49,48 @@ No* buscarElemento(No *no, int id){
                 return buscarElemento(no->direita, id);
             }
         }
+    }
+}
+
+void excluirTarefa(Arvore *arvore){
+    int id;
+    printf("Digite o ID da tarefa que deseja excluir: ");
+    scanf("%d", &id);
+    No *tarefa = buscarElemento(arvore->raiz, id);
+    if(tarefa != NULL){
+        if(tarefa->esquerda == NULL && tarefa->direita == NULL){
+            if(tarefa->pai == NULL){
+                arvore->raiz = NULL;
+            } else {
+                if(tarefa->pai->esquerda == tarefa){
+                    tarefa->pai->esquerda = NULL;
+                } else {
+                    tarefa->pai->direita = NULL;
+                }
+            }
+        } else if(tarefa->esquerda == NULL || tarefa->direita == NULL){
+            No *filho = tarefa->esquerda == NULL ? tarefa->direita : tarefa->esquerda;
+            if(tarefa->pai == NULL){
+                arvore->raiz = filho;
+            } else {
+                if(tarefa->pai->esquerda == tarefa){
+                    tarefa->pai->esquerda = filho;
+                } else {
+                    tarefa->pai->direita = filho;
+                }
+            }
+            filho->pai = tarefa->pai;
+        } else {
+            No *sucessor = tarefa->direita;
+            while(sucessor->esquerda != NULL){
+                sucessor = sucessor->esquerda;
+            }
+            tarefa->tarefa = sucessor->tarefa;
+            excluirTarefa(arvore);
+        }
+        free(tarefa);
+    } else {
+        printf("Tarefa nao encontrada!\n");
     }
 }
 
@@ -86,11 +133,14 @@ void criarTarefa(Arvore *arvore, int id){
 
     if(arvore->raiz == NULL){
         arvore->raiz = novo;
+        novo->pai = NULL;  // the root node has no parent
     } else {
-        inserirElemento(arvore->raiz, novo);
+        inserirElemento(arvore->raiz, novo, NULL);
     }
     
 }
+
+
 
 
 
