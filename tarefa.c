@@ -3,71 +3,60 @@
 #include <string.h>
 #include "tarefa.h"
 
+void iniciarArvore(Arvore *a){
+    a->raiz = NULL;
+}
 
-// Função para adicionar uma tarefa na árvore
-Node* adicionarTarefa(Node* raiz, Tarefa tarefa){
-    if(raiz == NULL){
-        Node* novo = (Node*)malloc(sizeof(Node));
-        novo->tarefa = tarefa;
-        novo->esquerda = NULL;
-        novo->direita = NULL;
+No* inserirElemento(No *no, No *novo){
+    if (no == NULL){
         return novo;
+    } else {
+        if (no->tarefa.id >= novo->tarefa.id)
+            no->esquerda = inserirElemento(no->esquerda, novo);
+        else
+            no->direita = inserirElemento(no->direita, novo);
     }
-    if(tarefa.id < raiz->tarefa.id){
-        raiz->esquerda = adicionarTarefa(raiz->esquerda, tarefa);
-    }else{
-        raiz->direita = adicionarTarefa(raiz->direita, tarefa);
-    }
-    return raiz;
+    return no;
 }
 
-// Function to sort a list of tasks by deadline using quicksort
-void quicksort(Node* start, Node* end) {
-    if (start == NULL || start == end || start == end->direita) {
-        return;
-    }
-
-    Node* pivot = partition(start, end);
-    quicksort(start, pivot);
-    quicksort(pivot->direita, end);
-}
-
-// Function to partition the list for quicksort
-Node* partition(Node* start, Node* end) {
-    Tarefa pivot = end->tarefa;
-    Node* i = start->esquerda;
-
-    for (Node* j = start; j != end; j = j->direita) {
-        if (j->tarefa.tempoLimite <= pivot.tempoLimite) {
-            i = (i == NULL) ? start : i->direita;
-            swap(&(i->tarefa), &(j->tarefa));
-        }
-    }
-    i = (i == NULL) ? start : i->direita;
-    swap(&(i->tarefa), &(end->tarefa));
-    return i;
-}
-
-// Function to swap two tasks
-void swap(Tarefa* a, Tarefa* b) {
-    Tarefa temp = *a;
-    *a = *b;
-    *b = temp;
-}
-
-// Function to display a list of tasks
-void exibirTarefas(Node* head) {
-    Node* current = head;
-    while (current != NULL) {
-        printf("ID: %d\n", current->tarefa.id);
-        printf("Descricao: %s\n", current->tarefa.descricao);
-        printf("Tempo Limite: %d horas\n", current->tarefa.tempoLimite);
-        printf("Situacao: %s\n", current->tarefa.situacao == 0 ? "Ativa" : "Concluida");
-        printf("\n");
-        current = current->direita;
+void imprimirArvore(No *no){
+    if(no != NULL){
+        imprimirArvore(no->esquerda);
+        printf("Tarefa ID-%d\n", no->tarefa.id);
+        printf("Descricao: %s", no->tarefa.descricao);
+        printf("Tempo limite (em horas): %d\n", no->tarefa.tempoLimite);
+        printf("Situcao: %s\n", no->tarefa.situacao == 1 ? "Ativa" : "Concluida");
+        printf("--------------------\n");
+        imprimirArvore(no->direita);
     }
 }
 
+void criarTarefa(Arvore *arvore, int id){
+    Tarefa tarefa;
+    printf("Digite a descricao da tarefa: \n");
+
+    // Clear the input buffer
+    int c;
+    while ((c = getchar()) != '\n' && c != EOF) {}
+
+    fgets(tarefa.descricao, sizeof tarefa.descricao, stdin);
+    printf("Digite o tempo limite da tarefa (Em horas): \n");
+    scanf("%d", &tarefa.tempoLimite);
+    tarefa.situacao = 1;
+    tarefa.id = id;
+
+    No *novo = malloc(sizeof(No));
+    novo->tarefa = tarefa;
+    novo->esquerda = NULL;
+    novo->direita = NULL;
+
+    if(arvore->raiz == NULL){
+        arvore->raiz = novo;
+    } else {
+        inserirElemento(arvore->raiz, novo);
+    }
+    
+}
 
 
 

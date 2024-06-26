@@ -6,20 +6,25 @@ typedef struct {
 } Tarefa;
 
 
-typedef struct Node {
+typedef struct No {
     Tarefa tarefa;
-    struct Node* esquerda;
-    struct Node* direita;
-} Node;
+    struct No* esquerda;
+    struct No* direita;
+} No;
+
+typedef struct arvore {
+    No *raiz;
+} Arvore;
 
 // Funções de manipulação de árvore
-Node* adicionarTarefa(Node* raiz, Tarefa tarefa);
-void visualizarTarefas(Node* raiz);
+void iniciarArvore(Arvore *a);
+No* inserirElemento(No *no, No *novo);
+void imprimirArvore(No *no);
 
 // Funções de manipulação de tarefas
-Tarefa criarTarefa(int id, char descricao[], int tempoLimite, int situacao);
-void concluirTarefa(Node* raiz, int id);
-void excluirTarefa(Node* raiz, int id);
+void criarTarefa(Arvore *arvore, int id);
+void adicionarTarefa(Arvore *a, Tarefa t);
+void visualizarTarefas(Arvore *a);
 
 
 

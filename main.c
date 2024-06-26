@@ -12,17 +12,21 @@ void menu(){
 
 
 int main(){
-    int opcao;
-    Node* raiz = NULL;
+    int opcao, id = 0;
+    Arvore *arvore = malloc(sizeof(Arvore));
+    iniciarArvore(arvore);
     do{
         menu();
         printf("Digite a opcao desejada: ");
         scanf("%d", &opcao);
         switch(opcao){
             case 1:
-
+                id++;
+                criarTarefa(arvore, id);
+                break;
             case 2:
-
+                imprimirArvore(arvore->raiz);
+                break;
             case 3:
 
             case 4:

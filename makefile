@@ -1,5 +1,5 @@
 # Nome do executável
-EXEC = todo
+EXEC = trabalho
 
 # Compilador
 CC = gcc
