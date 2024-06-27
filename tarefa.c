@@ -8,8 +8,10 @@ void iniciarArvore(Arvore *a){
 }
 
 No* inserirElemento(No *no, No *novo, No *pai){
+    //pai sempre sera null na primeira chamada
     if (no == NULL){
         novo->pai = pai;
+        novo->height = 1; // um nó sem filhos tem altura 1
         return novo;
     } else {
         if (no->tarefa.id >= novo->tarefa.id)
@@ -17,7 +19,24 @@ No* inserirElemento(No *no, No *novo, No *pai){
         else
             no->direita = inserirElemento(no->direita, novo, no);
     }
+
+    // atualiza a altura do nó atual
+    no->height = 1 + max(height(no->esquerda), height(no->direita));
+
     return no;
+}
+
+// funcao auxiliar para obter a altura de um no
+int height(No *no) {
+    if (no == NULL)
+        return 0;
+    else
+        return no->height;
+}
+
+// funcao auxiliar para obter o maximo de dois inteiros
+int max(int a, int b) {
+    return (a > b)? a : b;
 }
 
 void imprimirArvore(No *no){
@@ -29,6 +48,7 @@ void imprimirArvore(No *no){
         printf("Situcao: %s\n", no->tarefa.situacao == 1 ? "Ativa" : "Concluida");
         printf("DEBUG\n");
         printf("Pai: %d\n", no->pai == NULL ? -1 : no->pai->tarefa.id);
+        printf("Altura: %d\n", no->height);
         printf("Filho esquerdo: %d\n", no->esquerda == NULL ? -1 : no->esquerda->tarefa.id);
         printf("Filho direito: %d\n", no->direita == NULL ? -1 : no->direita->tarefa.id);
         printf("--------------------\n");
@@ -58,28 +78,29 @@ void excluirTarefa(Arvore *arvore){
     scanf("%d", &id);
     No *tarefa = buscarElemento(arvore->raiz, id);
     if(tarefa != NULL){
+        No *pai = tarefa->pai; // armazena o no pai para atualizar a altura depois
         if(tarefa->esquerda == NULL && tarefa->direita == NULL){
-            if(tarefa->pai == NULL){
+            if(pai == NULL){
                 arvore->raiz = NULL;
             } else {
-                if(tarefa->pai->esquerda == tarefa){
-                    tarefa->pai->esquerda = NULL;
+                if(pai->esquerda == tarefa){
+                    pai->esquerda = NULL;
                 } else {
-                    tarefa->pai->direita = NULL;
+                    pai->direita = NULL;
                 }
             }
         } else if(tarefa->esquerda == NULL || tarefa->direita == NULL){
             No *filho = tarefa->esquerda == NULL ? tarefa->direita : tarefa->esquerda;
-            if(tarefa->pai == NULL){
+            if(pai == NULL){
                 arvore->raiz = filho;
             } else {
-                if(tarefa->pai->esquerda == tarefa){
-                    tarefa->pai->esquerda = filho;
+                if(pai->esquerda == tarefa){
+                    pai->esquerda = filho;
                 } else {
-                    tarefa->pai->direita = filho;
+                    pai->direita = filho;
                 }
             }
-            filho->pai = tarefa->pai;
+            filho->pai = pai;
         } else {
             No *sucessor = tarefa->direita;
             while(sucessor->esquerda != NULL){
@@ -89,6 +110,11 @@ void excluirTarefa(Arvore *arvore){
             excluirTarefa(arvore);
         }
         free(tarefa);
+
+        // apos a remocao, atualize a altura do no pai
+        if(pai != NULL){
+            pai->height = 1 + max(height(pai->esquerda), height(pai->direita));
+        }
     } else {
         printf("Tarefa nao encontrada!\n");
     }
@@ -116,7 +142,7 @@ void criarTarefa(Arvore *arvore, int id){
     Tarefa tarefa;
     printf("Digite a descricao da tarefa: \n");
 
-    // Clear the input buffer
+    // Limpa o buffer do teclado
     int c;
     while ((c = getchar()) != '\n' && c != EOF) {}
 
@@ -133,7 +159,7 @@ void criarTarefa(Arvore *arvore, int id){
 
     if(arvore->raiz == NULL){
         arvore->raiz = novo;
-        novo->pai = NULL;  // the root node has no parent
+        novo->pai = NULL;  // a raiz nao tem pai
     } else {
         inserirElemento(arvore->raiz, novo, NULL);
     }
