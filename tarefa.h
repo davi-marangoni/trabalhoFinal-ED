@@ -11,7 +11,7 @@ typedef struct No {
     Tarefa tarefa;
     struct No* esquerda;
     struct No* direita;
-    int height;
+    int altura;
 } No;
 
 typedef struct arvore {
@@ -23,13 +23,20 @@ void iniciarArvore(Arvore *a);
 No* inserirElemento(No *no, No *novo, No *pai);
 void imprimirArvore(No *no);
 No* buscarElemento(No *no, int id);
-int height(No *no);
+int altura(No *no);
 int max(int a, int b);
+No* rotacaoDireita(No *y);
+No* rotacaoEsquerda(No *x);
+int verificaBalanceamento(No *no);
+No* balancearArvore(No* no);
 
 // Funcoes de manipulacao de tarefas
 void criarTarefa(Arvore *arvore, int id);
 void concluirTarefa(Arvore *arvore);
 void excluirTarefa(Arvore *arvore);
+No* excluirElemento(No* no, int id);
+No* encontrarMinimo(No* no);
+No* encontrarMaximo(No* no);
 
 
 
