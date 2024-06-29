@@ -58,7 +58,6 @@ No* balancearArvore(No* no) {
         no->direita = rotacaoDireita(no->direita);
         return rotacaoEsquerda(no);
     }
-
     return no;
 }
 
