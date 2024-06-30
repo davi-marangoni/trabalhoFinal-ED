@@ -3,128 +3,134 @@
 #include <string.h>
 #include "tarefa.h"
 
-void iniciarArvore(Arvore *a){
-    a->raiz = NULL;
+// Função para iniciar a árvore
+void iniciarArvore(Arvore *a) {
+    a->raiz = NULL; // Define a raiz da árvore como NULL, indicando que a árvore está vazia
 }
 
+// Função para inserir um elemento na árvore
 No* inserirElemento(No *no, No *novo, No *pai) {
     if (no == NULL) {
-        novo->pai = pai;
-        novo->altura = 1; // um no sem filhos tem altura 1
-        return novo;
+        novo->pai = pai;  // Define o pai do novo nó
+        novo->altura = 1; // Um nó sem filhos tem altura 1
+        return novo;      // Retorna o novo nó como a raiz da subárvore
     }
 
+    // Inserção recursiva na subárvore esquerda ou direita
     if (novo->tarefa.id < no->tarefa.id) {
         no->esquerda = inserirElemento(no->esquerda, novo, no);
     } else if (novo->tarefa.id > no->tarefa.id) {
         no->direita = inserirElemento(no->direita, novo, no);
     } else {
-        return no; // IDs duplicados não sao permitidos
+        return no; // IDs duplicados não são permitidos
     }
 
-    // Atualiza a altura do no atual e balanceia a arvore
+    // Atualiza a altura do nó atual e balanceia a árvore
     return balancearArvore(no);
 }
 
+// Função para balancear a árvore AVL
 No* balancearArvore(No* no) {
     if (no == NULL) {
         return no;
     }
 
-    // Atualiza a altura do no
+    // Atualiza a altura do nó
     no->altura = 1 + max(altura(no->esquerda), altura(no->direita));
 
-    // Verifica o balanceamento do no
+    // Verifica o balanceamento do nó
     int balance = verificaBalanceamento(no);
 
-    // Rotação a direita
+    // Realiza rotações para balancear a árvore
     if (balance > 1 && verificaBalanceamento(no->esquerda) >= 0) {
-        return rotacaoDireita(no);
+        return rotacaoDireita(no); // Rotação simples à direita
     }
-
-    // Rotação a esquerda
     if (balance < -1 && verificaBalanceamento(no->direita) <= 0) {
-        return rotacaoEsquerda(no);
+        return rotacaoEsquerda(no); // Rotação simples à esquerda
     }
-
-    // Rotacao dupla (esquerda-direita)
     if (balance > 1 && verificaBalanceamento(no->esquerda) < 0) {
-        no->esquerda = rotacaoEsquerda(no->esquerda);
+        no->esquerda = rotacaoEsquerda(no->esquerda); // Rotação dupla (esquerda-direita)
         return rotacaoDireita(no);
     }
-
-    // Rotacao dupla (direita-esquerda)
     if (balance < -1 && verificaBalanceamento(no->direita) > 0) {
-        no->direita = rotacaoDireita(no->direita);
+        no->direita = rotacaoDireita(no->direita); // Rotação dupla (direita-esquerda)
         return rotacaoEsquerda(no);
     }
-    return no;
+
+    return no; // Retorna o nó balanceado
 }
 
-
+// Função para realizar rotação à direita
 No* rotacaoDireita(No* y) {
-    No* x = y->esquerda;
-    No* T2 = x->direita;
+    No* x = y->esquerda;       // Define x como filho esquerdo de y
+    No* T2 = x->direita;       // Salva a subárvore direita de x
 
+    // Realiza a rotação
     x->direita = y;
     y->esquerda = T2;
 
+    // Atualiza os pais
     if (T2 != NULL) {
         T2->pai = y;
     }
-
     x->pai = y->pai;
     y->pai = x;
 
+    // Atualiza as alturas
     y->altura = max(altura(y->esquerda), altura(y->direita)) + 1;
     x->altura = max(altura(x->esquerda), altura(x->direita)) + 1;
 
-    return x;
+    return x; // Retorna a nova raiz da subárvore
 }
 
+// Função para realizar rotação à esquerda
 No* rotacaoEsquerda(No* x) {
-    No* y = x->direita;
-    No* T2 = y->esquerda;
+    No* y = x->direita;        // Define y como filho direito de x
+    No* T2 = y->esquerda;      // Salva a subárvore esquerda de y
 
+    // Realiza a rotação
     y->esquerda = x;
     x->direita = T2;
 
+    // Atualiza os pais
     if (T2 != NULL) {
         T2->pai = x;
     }
-
     y->pai = x->pai;
     x->pai = y;
 
+    // Atualiza as alturas
     x->altura = max(altura(x->esquerda), altura(x->direita)) + 1;
     y->altura = max(altura(y->esquerda), altura(y->direita)) + 1;
 
-    return y;
+    return y; // Retorna a nova raiz da subárvore
 }
 
+// Função para verificar o balanceamento de um nó
 int verificaBalanceamento(No* no) {
     if (no == NULL) {
-        return 0;
+        return 0; // Se o nó é NULL, o balanceamento é 0
     }
-    return altura(no->esquerda) - altura(no->direita);
+    return altura(no->esquerda) - altura(no->direita); // Retorna a diferença de altura entre as subárvores
 }
 
-// funcao auxiliar para obter a altura de um no
+// Função auxiliar para obter a altura de um nó
 int altura(No* no) {
     if (no == NULL) {
-        return 0;
+        return 0; // Se o nó é NULL, sua altura é 0
     }
-    return no->altura;
+    return no->altura; // Retorna a altura do nó
 }
 
-// funcao auxiliar para obter o maximo de dois inteiros
+// Função auxiliar para obter o máximo de dois inteiros
 int max(int a, int b) {
-    return (a > b)? a : b;
+    return (a > b)? a : b; // Retorna o maior dos dois valores
 }
 
-void imprimirArvore(No *no){
-    if(no != NULL){
-        imprimirArvore(no->esquerda);
+// Função para imprimir a árvore
+void imprimirArvore(No *no) {
+    if (no != NULL) {
+        imprimirArvore(no->esquerda); // Imprime a subárvore esquerda
         printf("Tarefa ID-%d\n", no->tarefa.id);
         printf("Descricao: %s", no->tarefa.descricao);
         printf("Tempo limite (em horas): %d\n", no->tarefa.tempoLimite);
@@ -135,44 +141,49 @@ void imprimirArvore(No *no){
         printf("Filho esquerdo: %d\n", no->esquerda == NULL ? -1 : no->esquerda->tarefa.id);
         printf("Filho direito: %d\n", no->direita == NULL ? -1 : no->direita->tarefa.id);
         printf("--------------------\n");
-        imprimirArvore(no->direita);
+        imprimirArvore(no->direita); // Imprime a subárvore direita
     }
 }
 
-No* buscarElemento(No *no, int id){
-    if(no == NULL){
-        return NULL;
+// Função para buscar um elemento na árvore pelo ID
+No* buscarElemento(No *no, int id) {
+    if (no == NULL) {
+        return NULL; // Se o nó é NULL, a busca falhou
     } else {
-        if(no->tarefa.id == id){
-            return no;
+        if (no->tarefa.id == id) {
+            return no; // Se o nó contém o ID buscado, retorna o nó
         } else {
-            if(no->tarefa.id > id){
-                return buscarElemento(no->esquerda, id);
+            if (no->tarefa.id > id) {
+                return buscarElemento(no->esquerda, id); // Busca na subárvore esquerda
             } else {
-                return buscarElemento(no->direita, id);
+                return buscarElemento(no->direita, id); // Busca na subárvore direita
             }
         }
     }
 }
 
+// Função para excluir uma tarefa da árvore
 void excluirTarefa(Arvore *arvore) {
     int id;
     printf("Digite o ID da tarefa que deseja excluir: ");
-    scanf("%d", &id);
-    arvore->raiz = excluirElemento(arvore->raiz, id);
+    scanf("%d", &id); // Lê o ID da tarefa a ser excluída
+    arvore->raiz = excluirElemento(arvore->raiz, id); // Exclui o elemento da árvore
 }
 
+// Função para excluir um elemento da árvore
 No* excluirElemento(No* no, int id) {
     if (no == NULL) {
         printf("Tarefa nao encontrada!\n");
-        return no;
+        return no; // Se o nó é NULL, a tarefa não foi encontrada
     }
 
+    // Busca o nó a ser excluído
     if (id < no->tarefa.id) {
         no->esquerda = excluirElemento(no->esquerda, id);
     } else if (id > no->tarefa.id) {
         no->direita = excluirElemento(no->direita, id);
     } else {
+        // Nó encontrado, realiza a exclusão
         if (no->esquerda == NULL || no->direita == NULL) {
             No* temp = no->esquerda ? no->esquerda : no->direita;
 
@@ -191,10 +202,10 @@ No* excluirElemento(No* no, int id) {
     }
 
     if (no == NULL) {
-        return no;
+        return no; // Se o nó é NULL após a exclusão, retorna NULL
     }
 
-    // Atualiza pai dos filhos apos a exclusao
+    // Atualiza pai dos filhos após a exclusão
     if (no->esquerda != NULL) {
         no->esquerda->pai = no;
     }
@@ -202,45 +213,45 @@ No* excluirElemento(No* no, int id) {
         no->direita->pai = no;
     }
 
-    return balancearArvore(no);
+    return balancearArvore(no); // Balanceia a árvore após a exclusão
 }
 
-
+// Função para encontrar o mínimo de uma subárvore
 No* encontrarMinimo(No* no) {
     No* atual = no;
 
     while (atual->esquerda != NULL) {
-        atual = atual->esquerda;
+        atual = atual->esquerda; // Vai para o nó mais à esquerda
     }
 
-    return atual;
+    return atual; // Retorna o nó mínimo
 }
 
+// Função para encontrar o máximo de uma subárvore
 No* encontrarMaximo(No* no) {
     No* atual = no;
 
     while (atual->direita != NULL) {
-        atual = atual->direita;
+        atual = atual->direita; // Vai para o nó mais à direita
     }
 
-    return atual;
+    return atual; // Retorna o nó máximo
 }
 
-void concluirTarefa(Arvore *arvore){
+// Função para concluir uma tarefa
+void concluirTarefa(Arvore *arvore) {
     int id;
     printf("Digite o ID da tarefa que deseja concluir: ");
-    scanf("%d", &id);
-    No *tarefa = buscarElemento(arvore->raiz, id);
-    if(tarefa != NULL){
+    scanf("%d", &id); // Lê o ID da tarefa a ser concluída
+    No *tarefa = buscarElemento(arvore->raiz, id); // Busca a tarefa na árvore
+    if (tarefa != NULL) {
         if (tarefa->tarefa.situacao == 2) {
             printf("Tarefa ja concluida!\n");
-            return;
+            return; // Se a tarefa já está concluída, sai da função
         }
-        tarefa->tarefa.situacao = 2;
-    } 
-    else {
+        tarefa->tarefa.situacao = 2; // Define a tarefa como concluída
+    } else {
         printf("Tarefa nao encontrada!\n");
-
     }
 }
 
@@ -264,11 +275,11 @@ void criarTarefa(Arvore *arvore, int id) {
     novo->direita = NULL;
     novo->pai = NULL;  // O no novo ainda nao tem pai
 
-    // Atualiza a raiz da arvore se necessario
+    // Atualiza a raiz da árvore se necessário
     if (arvore->raiz == NULL) {
-        arvore->raiz = novo;
+        arvore->raiz = novo; // Se a árvore está vazia, o novo nó se torna a raiz
     } else {
-        arvore->raiz = inserirElemento(arvore->raiz, novo, NULL);
+        arvore->raiz = inserirElemento(arvore->raiz, novo, NULL); // Insere o novo nó na árvore existente
     }
 }
 
@@ -281,30 +292,31 @@ void visualizarTarefas(Arvore *arvore) {
     scanf("%d", &opcao);
 
     int count = 0;
-    coletarTarefas(arvore->raiz, NULL, &count); // Conta o número de tarefas
+    coletarTarefas(arvore->raiz, NULL, &count); // Conta o número de tarefas na árvore
 
-    Tarefa *tarefas = malloc(count * sizeof(Tarefa));
+    Tarefa *tarefas = malloc(count * sizeof(Tarefa)); // Aloca memória para armazenar as tarefas
     int idx = 0;
-    coletarTarefas(arvore->raiz, &tarefas, &idx); // Coleta as tarefas
+    coletarTarefas(arvore->raiz, &tarefas, &idx); // Coleta as tarefas da árvore
 
-    // Ordena as tarefas em todos os casos, exceto quando todas as tarefas são mostradas sem ordem específica
+    // Ordena as tarefas se necessário
     if (opcao == 1 || opcao == 2 || opcao == 3) {
-        qsort(tarefas, count, sizeof(Tarefa), compararTarefas);
+        qsort(tarefas, count, sizeof(Tarefa), compararTarefas); // Ordena as tarefas
     }
 
-    imprimirTarefas(tarefas, count, opcao == 1 ? 0 : (opcao == 2 ? 1 : 2));
+    imprimirTarefas(tarefas, count, opcao == 1 ? 0 : (opcao == 2 ? 1 : 2)); // Imprime as tarefas de acordo com a opção escolhida
 
     free(tarefas);
 }
 
+
 void coletarTarefas(No *no, Tarefa **tarefas, int *count) {
     if (no != NULL) {
-        coletarTarefas(no->esquerda, tarefas, count);
+        coletarTarefas(no->esquerda, tarefas, count); // Coleta tarefas da subárvore esquerda
         if (tarefas != NULL) {
-            (*tarefas)[*count] = no->tarefa;
+            (*tarefas)[*count] = no->tarefa; // Adiciona a tarefa atual ao array de tarefas
         }
-        (*count)++;
-        coletarTarefas(no->direita, tarefas, count);
+        (*count)++; // Incrementa o contador de tarefas
+        coletarTarefas(no->direita, tarefas, count); // Coleta tarefas da subárvore direita
     }
 }
 
@@ -331,12 +343,3 @@ void imprimirTarefas(Tarefa *tarefas, int count, int situacaoFiltro) {
         }
     }
 }
-
-
-
-
-
-
-
-
-
