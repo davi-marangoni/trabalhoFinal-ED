@@ -272,7 +272,65 @@ void criarTarefa(Arvore *arvore, int id) {
     }
 }
 
+void visualizarTarefas(Arvore *arvore) {
+    int opcao;
+    printf("1. Todas as tarefas\n");
+    printf("2. Somente tarefas ativas\n");
+    printf("3. Somente tarefas concluidas\n");
+    printf("Digite a opcao de visualizacao desejada: ");
+    scanf("%d", &opcao);
 
+    int count = 0;
+    coletarTarefas(arvore->raiz, NULL, &count); // Conta o número de tarefas
+
+    Tarefa *tarefas = malloc(count * sizeof(Tarefa));
+    int idx = 0;
+    coletarTarefas(arvore->raiz, &tarefas, &idx); // Coleta as tarefas
+
+    // Ordena as tarefas em todos os casos, exceto quando todas as tarefas são mostradas sem ordem específica
+    if (opcao == 1 || opcao == 2 || opcao == 3) {
+        qsort(tarefas, count, sizeof(Tarefa), compararTarefas);
+    }
+
+    imprimirTarefas(tarefas, count, opcao == 1 ? 0 : (opcao == 2 ? 1 : 2));
+
+    free(tarefas);
+}
+
+void coletarTarefas(No *no, Tarefa **tarefas, int *count) {
+    if (no != NULL) {
+        coletarTarefas(no->esquerda, tarefas, count);
+        if (tarefas != NULL) {
+            (*tarefas)[*count] = no->tarefa;
+        }
+        (*count)++;
+        coletarTarefas(no->direita, tarefas, count);
+    }
+}
+
+int compararTarefas(const void *a, const void *b) {
+    Tarefa *tarefaA = (Tarefa *)a;
+    Tarefa *tarefaB = (Tarefa *)b;
+
+    // Se as situações são diferentes, coloca as ativas primeiro
+    if (tarefaA->situacao != tarefaB->situacao) {
+        return tarefaA->situacao - tarefaB->situacao;
+    }
+    // Se as situações são iguais, ordena por tempo limite
+    return tarefaA->tempoLimite - tarefaB->tempoLimite;
+}
+
+void imprimirTarefas(Tarefa *tarefas, int count, int situacaoFiltro) {
+    for (int i = 0; i < count; i++) {
+        if (situacaoFiltro == 0 || tarefas[i].situacao == situacaoFiltro) {
+            printf("Tarefa ID-%d\n", tarefas[i].id);
+            printf("Descricao: %s", tarefas[i].descricao);
+            printf("Tempo limite (em horas): %d\n", tarefas[i].tempoLimite);
+            printf("Situcao: %s\n", tarefas[i].situacao == 1 ? "Ativa" : "Concluida");
+            printf("--------------------\n");
+        }
+    }
+}
 
 
 

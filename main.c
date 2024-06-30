@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include "tarefa.h"
 
-void menu(){
+void menu() {
     printf("1. Adicionar Tarefa\n");
     printf("2. Visualizacao de Tarefas\n");
     printf("3. Concluir Tarefa\n");
@@ -10,22 +10,21 @@ void menu(){
     printf("5. Sair\n");
 }
 
-
-int main(){
+int main() {
     int opcao, id = 0;
     Arvore *arvore = malloc(sizeof(Arvore));
     iniciarArvore(arvore);
-    do{
+    do {
         menu();
         printf("Digite a opcao desejada: ");
         scanf("%d", &opcao);
-        switch(opcao){
+        switch (opcao) {
             case 1:
                 id++;
                 criarTarefa(arvore, id);
                 break;
             case 2:
-                imprimirArvore(arvore->raiz);
+                visualizarTarefas(arvore);
                 break;
             case 3:
                 concluirTarefa(arvore);
@@ -34,13 +33,10 @@ int main(){
                 excluirTarefa(arvore);
                 break;
             case 5:
-
+                break;
             default:
                 printf("Opcao invalida!\n");
         }
-    }while(opcao != 5);
+    } while (opcao != 5);
     return 0;
 }
-
-
-

@@ -37,6 +37,10 @@ void excluirTarefa(Arvore *arvore);
 No* excluirElemento(No* no, int id);
 No* encontrarMinimo(No* no);
 No* encontrarMaximo(No* no);
+void visualizarTarefas(Arvore *arvore);
+void coletarTarefas(No *no, Tarefa **tarefas, int *count);
+int compararTarefas(const void *a, const void *b);
+void imprimirTarefas(Tarefa *tarefas, int count, int situacaoFiltro);
 
 
 
